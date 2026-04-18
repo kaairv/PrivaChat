@@ -1,0 +1,72 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Public profile of a user using a unique ID.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "username": { "type": "string", "description": "Unique user ID (the identifier)" },
+        "displayName": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "status": { "type": "string" },
+        "lastSeen": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "username", "displayName", "createdAt"]
+    },
+    "Chat": {
+      "title": "Chat Session",
+      "description": "A conversation between users.",
+      "type": "object",
+      "properties": {
+        "members": { "type": "array", "description": "Array of usernames" },
+        "memberUids": { "type": "array", "description": "Array of Firebase Auth UIDs for security rules" },
+        "lastMessage": { "type": "object" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["members", "memberUids", "createdAt", "updatedAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "An individual message in a chat.",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string", "description": "Username of the sender" },
+        "senderUid": { "type": "string", "description": "Auth UID of the sender" },
+        "text": { "type": "string" },
+        "type": { "type": "string", "enum": ["text", "image"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["senderId", "senderUid", "text", "type", "createdAt"]
+    },
+    "UsernameMapping": {
+      "title": "Username Mapping",
+      "description": "Enforces username uniqueness.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles indexed by UID."
+    },
+    "/usernames/{username}": {
+      "schema": "UsernameMapping",
+      "description": "Ensures each username is unique."
+    },
+    "/chats/{chatId}": {
+      "schema": "Chat",
+      "description": "Chat documents."
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Messages within a chat."
+    }
+  }
+}
