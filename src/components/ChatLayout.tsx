@@ -37,6 +37,7 @@ export default function ChatLayout({ currentUser }: ChatLayoutProps) {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log(`Received ${snapshot.docs.length} chats`);
       const chatList = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -50,6 +51,8 @@ export default function ChatLayout({ currentUser }: ChatLayoutProps) {
       });
 
       setChats(sorted);
+    }, (error) => {
+      console.error("Chats subscription error:", error);
     });
 
     return () => unsubscribe();

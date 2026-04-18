@@ -1,6 +1,10 @@
 {
   "name": "PrivaChat",
   "description": "A privacy-first messaging app using unique IDs instead of phone numbers for enhanced security.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
   "majorCapabilities": []
 }

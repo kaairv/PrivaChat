@@ -46,16 +46,26 @@ export default function ChatWindow({ chat, currentUser, onBack }: ChatWindowProp
 
     // Subscribe to messages
     const q = query(
-      collection(db, 'chats', chat.id, 'messages'),
-      orderBy('createdAt', 'asc')
+      collection(db, 'chats', chat.id, 'messages')
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log(`Received ${snapshot.docs.length} messages`);
       const msgs = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Message[];
-      setMessages(msgs);
+
+      // Sort in memory to avoid index requirements
+      const sorted = msgs.sort((a, b) => {
+        const timeA = a.createdAt?.seconds || 0;
+        const timeB = b.createdAt?.seconds || 0;
+        return timeA - timeB;
+      });
+
+      setMessages(sorted);
+    }, (error) => {
+      console.error("Messages subscription error:", error);
     });
 
     return () => unsubscribe();
